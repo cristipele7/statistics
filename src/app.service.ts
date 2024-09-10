@@ -7,7 +7,9 @@ export class AppService {
   constructor(private prisma: PrismaService) {}
 
   add(data: Prisma.StatsCreateInput): Promise<Stats> {
-    data.percentage = (data.badMatches * 100) / data.matches;
+    data.percentage = data.matches
+      ? (data.badMatches * 100) / data.matches
+      : 100;
     return this.prisma.stats.create({
       data,
     });
@@ -15,7 +17,7 @@ export class AppService {
 
   get(): Promise<Stats[]> {
     return this.prisma.stats.findMany({
-      orderBy: [{ percentage: 'asc' }, { matches: 'desc' }, { round: 'desc' }],
+      orderBy: [{ percentage: 'asc' }, { matches: 'desc' }],
     });
   }
 
