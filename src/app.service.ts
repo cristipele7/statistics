@@ -6,7 +6,7 @@ import { Prisma, Stats } from '@prisma/client';
 export class AppService {
   constructor(private prisma: PrismaService) {}
 
-  add(data: Prisma.StatsCreateInput): Promise<Stats> {
+  async add(data: Prisma.StatsCreateInput): Promise<Stats> {
     data.percentage = data.matches
       ? (data.badMatches * 100) / data.matches
       : 100;
@@ -15,18 +15,30 @@ export class AppService {
     });
   }
 
-  get(): Promise<Stats[]> {
+  async get(): Promise<Stats[]> {
     return this.prisma.stats.findMany({
       orderBy: [{ percentage: 'asc' }, { matches: 'desc' }],
     });
   }
 
-  update(id: number, data: Prisma.StatsUpdateInput): Promise<Stats> {
+  async update(id: number, data: Prisma.StatsUpdateInput): Promise<Stats> {
+    const oldStats = await this.prisma.stats.findUnique({
+      where: {
+        id,
+      },
+    });
+    const newData = <Stats>{
+      ...oldStats,
+      ...data,
+    };
+    newData.percentage = newData.matches
+      ? (newData.badMatches * 100) / newData.matches
+      : 100;
     return this.prisma.stats.update({
       where: {
         id,
       },
-      data,
+      data: newData,
     });
   }
 }
