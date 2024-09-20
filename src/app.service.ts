@@ -21,19 +21,23 @@ export class AppService {
     });
   }
 
-  async update(id: number, data: Prisma.StatsUpdateInput): Promise<Stats> {
+  async update(id: number, data: Stats): Promise<Stats> {
     const oldStats = await this.prisma.stats.findUnique({
       where: {
         id,
       },
     });
+
     const newData = <Stats>{
       ...oldStats,
       ...data,
+      matches: oldStats.matches + data.matches,
+      badMatches: oldStats.badMatches + data.badMatches,
     };
     newData.percentage = newData.matches
       ? (newData.badMatches * 100) / newData.matches
       : 100;
+
     return this.prisma.stats.update({
       where: {
         id,

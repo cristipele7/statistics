@@ -16,8 +16,8 @@ datasource db {
 model Stats {
   id         Int    @id @default(autoincrement())
   country    String @unique
-  matches    Int @db.Int
-  badMatches Int @db.Int
-  percentage Float @db.Double
-  round      Int @db.Int
+  matches    Int    @db.Int
+  badMatches Int    @db.Int
+  percentage Float  @db.Double
+  round      Float  @db.Double
 }
