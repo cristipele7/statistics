@@ -7,9 +7,11 @@ export class AppService {
   constructor(private prisma: PrismaService) {}
 
   async add(data: Prisma.StatsCreateInput): Promise<Stats> {
-    data.percentage = data.matches
-      ? (data.badMatches * 100) / data.matches
+    data.handicapPerc = data.matches
+      ? (data.handicap * 100) / data.matches
       : 100;
+    data.overPerc = data.matches ? (data.overPerc * 100) / data.matches : 100;
+    data.underPerc = data.matches ? (data.under * 100) / data.matches : 100;
     return this.prisma.stats.create({
       data,
     });
@@ -17,7 +19,12 @@ export class AppService {
 
   async get(): Promise<Stats[]> {
     return this.prisma.stats.findMany({
-      orderBy: [{ percentage: 'asc' }, { matches: 'desc' }],
+      orderBy: [
+        { handicapPerc: 'asc' },
+        { overPerc: 'asc' },
+        { underPerc: 'asc' },
+        { matches: 'desc' },
+      ],
     });
   }
 
@@ -32,10 +39,22 @@ export class AppService {
       ...oldStats,
       ...data,
       matches: oldStats.matches + data.matches,
-      badMatches: oldStats.badMatches + data.badMatches,
+      handicap:
+        oldStats.handicap === null ? null : oldStats.handicap + data.handicap,
+      over: oldStats.over + data.over,
+      under: oldStats.under + data.under,
     };
-    newData.percentage = newData.matches
-      ? (newData.badMatches * 100) / newData.matches
+    newData.handicapPerc =
+      newData.handicapPerc === null
+        ? null
+        : newData.matches
+          ? (newData.handicap * 100) / newData.matches
+          : 100;
+    newData.overPerc = newData.matches
+      ? (newData.over * 100) / newData.matches
+      : 100;
+    newData.underPerc = newData.matches
+      ? (newData.under * 100) / newData.matches
       : 100;
 
     return this.prisma.stats.update({

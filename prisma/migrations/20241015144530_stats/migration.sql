@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `stats` MODIFY `handicap` INTEGER NULL DEFAULT 0,
+    MODIFY `handicapPerc` DOUBLE NULL DEFAULT 100;
