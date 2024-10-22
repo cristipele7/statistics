@@ -19,8 +19,6 @@ model Stats {
   matches      Int    @default(0) @db.Int
   handicap     Int?   @default(0) @db.Int
   handicapPerc Float? @default(100) @db.Double
-  over         Int    @default(0) @db.Int
-  overPerc     Float  @default(100) @db.Double
   under        Int    @default(0) @db.Int
   underPerc    Float  @default(100) @db.Double
   round        Float  @db.Double
